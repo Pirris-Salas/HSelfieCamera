@@ -2,6 +2,10 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 
+//Aseguramos aplicar el plugin de Huawei, de forma que podemos consumir todos los kits declarados
+//en las dependencias de este gradle
+apply plugin: 'com.huawei.agconnect'
+
 android {
     compileSdkVersion 30
     buildToolsVersion "30.0.1"
@@ -16,10 +20,26 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    signingConfigs{
+        release{
+            storeFile file('HmsDemo')
+            keyAlias('HmsDemo')
+            keyPassword('Luis1010')
+            storePassword('Luis1010')
+            v1SigningEnabled true
+            v2SigningEnabled true
+        }
+    }
+
     buildTypes {
         release {
+            signingConfig signingConfigs.release
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+        debug{
+            signingConfig signingConfigs.release
+            debuggable true
         }
     }
 }
@@ -34,4 +54,19 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 
+    //Huawei Account Kit
+    implementation "com.huawei.hms:hwid:4.0.4.300"
+
+    //Huawei Push Kit
+    implementation "com.huawei.hms:push:4.0.4.301"
+
+    //Kit de Machine Learning
+    // Import the facial expression detection model package.
+    implementation "com.huawei.hms:ml-computer-vision-face-emotion-model:1.0.4.300"
+    // Import the facial feature detection model package.
+    implementation "com.huawei.hms:ml-computer-vision-face-feature-model:1.0.4.300"
+    // Import the contour and key point detection model package.
+    implementation "com.huawei.hms:ml-computer-vision-face-shape-point-model:1.0.4.300"
+    // Import the base SDK.
+    implementation "com.huawei.hms:ml-computer-vision-face:1.0.4.300"
 }
