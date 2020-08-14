@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">HSelfieCamera</string>
+
+    <string name="tituloLogin">Bienvenido a HSelfie Camera</string>
+    <string name="descripcionLogin">Bienvenido a la mejor cámara de selfies del mercado.\n
+                                    Para usarme, recuerda autenticarte con tu Huawei ID.</string>
 </resources>
