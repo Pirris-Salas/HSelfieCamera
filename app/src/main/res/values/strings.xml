@@ -4,4 +4,12 @@
     <string name="tituloLogin">Bienvenido a HSelfie Camera</string>
     <string name="descripcionLogin">Bienvenido a la mejor cámara de selfies del mercado.\n
                                     Para usarme, recuerda autenticarte con tu Huawei ID.</string>
+
+    <string name="descripcionHome">Existen 2 formas de capturar tu selfie.\n
+                                    La cámara toma tu foto, si hay varias personas sonriendo.\n
+                                    O toma la foto si hay una persona más cerca sonriendo. \n
+                                     Tú, decides.</string>
+
+    <string name="btnMayoriaSonrie">La mayoría sonríe !</string>
+    <string name="btnNearestPerson">La persona más cercana sonríe !</string>
 </resources>

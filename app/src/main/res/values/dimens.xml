@@ -4,11 +4,15 @@
     <dimen name="margin30dp">30dp</dimen>
     <dimen name="margin32dp">32dp</dimen>
     <dimen name="margin150dp">150dp</dimen>
-
+    <dimen name="margin100dp">100dp</dimen>
+    <dimen name="margin8dp">8dp</dimen>
+    <dimen name="margin20dp">20dp</dimen>
+    <dimen name="margin40dp">40dp</dimen>
 
 
 
     <dimen name="margin25sp">25sp</dimen>
     <dimen name="margin18sp">15sp</dimen>
+    <dimen name="margin20sp">20sp</dimen>
 
 </resources>
