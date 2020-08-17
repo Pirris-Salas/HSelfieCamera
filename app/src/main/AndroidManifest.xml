@@ -2,6 +2,14 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.pirris.hselfiecamera">
 
+    <uses-feature android:name="android.hardware.camera"/> //Configuración de la cámara
+    
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/> //Permiso para agregar en la memoria externa
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/> //Permiso para acceder a la memoria externa y leerla
+    <uses-permission android:name="android.permission.CAMERA"/> //Acceso a la cámara
+    <uses-permission android:name="android.permission.INTERNET"/>//Acceso a internet
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/> //ESTADO DE LA RED, UBICACIÓN
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
