@@ -16,6 +16,7 @@ import com.huawei.hms.support.hwid.request.HuaweiIdAuthParams
 import com.huawei.hms.support.hwid.request.HuaweiIdAuthParamsHelper
 import com.pirris.hselfiecamera.R
 import com.pirris.hselfiecamera.auth.AuthActivity
+import com.pirris.hselfiecamera.face.LiveFaceActivityCamera
 import kotlinx.android.synthetic.main.activity_home.*
 import java.lang.RuntimeException
 import java.util.jar.Manifest
@@ -175,6 +176,14 @@ class MainActivity : AppCompatActivity() {
 
             logoutHuawei()//Función para cerrar sesión en la aplicación
         }
+
+
+        //Activamos la cámara
+        btnMostPeople.setOnClickListener {
+            val intent = Intent(this@MainActivity, LiveFaceActivityCamera::class.java)
+            startActivity(intent)
+        }
+
     }
 
     override fun onBackPressed() {

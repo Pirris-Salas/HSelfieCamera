@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
-    
+
     <com.pirris.hselfiecamera.camera.LensEnginePreview
         android:id="@+id/preview"
         android:layout_width="match_parent"
@@ -16,8 +16,34 @@
             android:layout_height="match_parent"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
-            android:layout_alignParentBottom="true"/>
+            android:layout_alignParentBottom="true" />
 
     </com.pirris.hselfiecamera.camera.LensEnginePreview>
+
+    <Button
+        android:id="@+id/btnFacingSwitch"
+        android:layout_width="@dimen/margin35dp"
+        android:layout_height="@dimen/margin35dp"
+        android:textOff=""
+        android:textOn=""
+        android:background="@drawable/front_back_switch"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="@dimen/margin30dp"/>
+
+    <Button
+        android:id="@+id/btnRestart"
+        android:layout_width="@dimen/margin35dp"
+        android:layout_height="@dimen/margin35dp"
+        android:textOn=""
+        android:textOff=""
+        android:background="@drawable/restart"
+        android:layout_marginBottom="@dimen/margin30dp"
+        android:layout_marginEnd="@dimen/margin20dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:gravity="start"
+        android:visibility="visible"/>
+
 
 </RelativeLayout>

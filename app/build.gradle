@@ -22,7 +22,7 @@ android {
 
     signingConfigs{
         release{
-            storeFile file('HmsDemo')
+            storeFile file('HmsDemo.jks')
             keyAlias('HmsDemo')
             keyPassword('Luis1010')
             storePassword('Luis1010')
