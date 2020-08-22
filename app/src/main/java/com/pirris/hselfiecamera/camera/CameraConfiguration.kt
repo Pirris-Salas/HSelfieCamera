@@ -20,7 +20,7 @@ open class CameraConfiguration{
 
         @get: Synchronized //get funciona al momento de declarar variables
         var cameraFacing = CAMERA_FACING_BACK
-        protected set //Esto funciona para indicar que la variable solo debe de ser accedida en
+            protected set //Esto funciona para indicar que la variable solo debe de ser accedida en
         //tiempo de ejecución, y así evitamos nullpointer exception
 
     }

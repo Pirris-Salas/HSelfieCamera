@@ -181,6 +181,14 @@ class MainActivity : AppCompatActivity() {
         //Activamos la cámara
         btnMostPeople.setOnClickListener {
             val intent = Intent(this@MainActivity, LiveFaceActivityCamera::class.java)
+            intent.putExtra("detect_mode", 1002)
+            startActivity(intent)
+        }
+
+        //El otro botón para activar la cámara
+        btnNearestPerson.setOnClickListener {
+            val intent = Intent(this, LiveFaceActivityCamera::class.java)
+            intent.putExtra("detect_mode", 1003)
             startActivity(intent)
         }
 

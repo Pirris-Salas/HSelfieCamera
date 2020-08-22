@@ -8,7 +8,7 @@ import android.view.View
 import com.pirris.hselfiecamera.camera.CameraConfiguration
 
 //Esta clase hereda de la clase view
-class GraphicOverlay (context: Context, attributeSet: AttributeSet): View(context, attributeSet){
+class GraphicOverlay (context: Context, attributeSet: AttributeSet?): View(context, attributeSet){
     private val lock = Any() // Con esta variable bloqueamos la cámara una vez la foto es tomada
     private var previewWidth = 0
     private var previewHeight = 0
@@ -26,7 +26,7 @@ class GraphicOverlay (context: Context, attributeSet: AttributeSet): View(contex
     }
 
     fun clear(){
-        synchronized(lock){graphics.clear()} //Permitimos que la cámara pueda volver a utilizarse
+        synchronized(lock) {graphics.clear()} //Permitimos que la cámara pueda volver a utilizarse
         this.postInvalidate()
     }
 
