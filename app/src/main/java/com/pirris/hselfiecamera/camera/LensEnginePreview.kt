@@ -148,17 +148,17 @@ class LensEnginePreview (context: Context, attributeSet: AttributeSet?): ViewGro
 
     private inner class SurfaceCallback: SurfaceHolder.Callback{
         override fun surfaceChanged(
-            p0: SurfaceHolder,
-            p1: Int,
-            p2: Int,
-            p3: Int) {
+            holder: SurfaceHolder,
+            format: Int,
+            width: Int,
+            heigth: Int) {
         }
 
-        override fun surfaceDestroyed(p0: SurfaceHolder) {
+        override fun surfaceDestroyed(holder: SurfaceHolder) {
             mSurfaceAvailable = false
         }
 
-        override fun surfaceCreated(p0: SurfaceHolder) {
+        override fun surfaceCreated(holder: SurfaceHolder) {
             mSurfaceAvailable = true
             try {
                 startIfReady()

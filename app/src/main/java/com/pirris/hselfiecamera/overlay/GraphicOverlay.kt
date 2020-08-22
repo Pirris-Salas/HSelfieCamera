@@ -1,7 +1,6 @@
 package com.pirris.hselfiecamera.overlay
 
 import android.content.Context
-import android.graphics.Camera
 import android.graphics.Canvas
 import android.util.AttributeSet
 import android.view.View
@@ -32,11 +31,11 @@ class GraphicOverlay (context: Context, attributeSet: AttributeSet?): View(conte
 
     fun setCameraInfo(width: Int, height: Int, facing: Int){
         synchronized(lock){
-            previewHeight = width
+            previewWidth = width
             previewHeight= height
             cameraFacing = facing
         }
-        this.invalidate() //Esto es para cerrar la cámara cuando no se utilize y así que no quede en
+        this.postInvalidate() //Esto es para cerrar la cámara cuando no se utilize y así que no quede en
         // un loop infinito
     }
 
@@ -53,7 +52,8 @@ class GraphicOverlay (context: Context, attributeSet: AttributeSet?): View(conte
                 heightScaleValue =
                     height.toFloat() / previewHeight.toFloat()
             }
-            for (graphic in graphics){ //For para recorrer y dibujar el cuadro que bordeará el rostro
+            //For para recorrer y dibujar el cuadro que bordeará el rostro
+            for (graphic in graphics){
                 graphic.draw(canvas)
             }
         }

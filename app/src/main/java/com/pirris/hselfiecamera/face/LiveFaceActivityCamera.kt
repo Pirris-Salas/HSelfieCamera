@@ -8,11 +8,16 @@ import android.view.View
 import android.widget.Button
 import com.huawei.hms.mlsdk.MLAnalyzerFactory
 import com.huawei.hms.mlsdk.common.LensEngine
+import com.huawei.hms.mlsdk.common.MLAnalyzer
+import com.huawei.hms.mlsdk.common.MLResultTrailer
+import com.huawei.hms.mlsdk.face.MLFace
 import com.huawei.hms.mlsdk.face.MLFaceAnalyzer
 import com.huawei.hms.mlsdk.face.MLFaceAnalyzerSetting
+import com.huawei.hms.mlsdk.face.MLMaxSizeFaceTransactor
 import com.pirris.hselfiecamera.R
 import com.pirris.hselfiecamera.camera.LensEnginePreview
 import com.pirris.hselfiecamera.overlay.GraphicOverlay
+import com.pirris.hselfiecamera.overlay.LocalFaceGraphic
 import java.io.IOException
 
 class LiveFaceActivityCamera : AppCompatActivity() {
@@ -22,6 +27,16 @@ class LiveFaceActivityCamera : AppCompatActivity() {
     private var overlay: GraphicOverlay? = null
     private var lensType = LensEngine.FRONT_LENS
     private var detectMode = 0  // Variable que almacenará el valor de detect mode de cada botón
+
+
+    //Según la documentación de Huawei este es el valor efectivo, el cual oscila entre el 80% y el 99%
+    //Acorde a la documentación el 95% es el que posee un rate más exitoso de detección
+    private val smillingPossibility = 0.95f
+
+    //Utilizaremos esta variable para saber si es seguro o no tomar la foto. Dependiendo de
+    //las probabilidades de detectar una sonrisa, el código decidirá si tomar la foto o no
+    private var safeToTakePicture = false
+
     private var restartButton: Button? = null
 
 
@@ -43,6 +58,7 @@ class LiveFaceActivityCamera : AppCompatActivity() {
         overlay = findViewById(R.id.faceOverlay)
         restartButton = findViewById(R.id.btnRestart)
 
+        createFaceAnalyzer() //Avalizar el rostro
         createLensEngine()
     }
 
@@ -76,21 +92,84 @@ class LiveFaceActivityCamera : AppCompatActivity() {
 
 
     /**
-     * Esta función, hace el papel de motor del lente.
      * MLFaceAnalyzerSrtting es una herramienta de Machine Learning para analizar rostros
      * MinFaceProportion analiza en que posición se encuentra el rostro
      * TracingAllowed permite seguir el rostro a pesar de que se encuentre en movimiento
-     *
      */
-    private fun createLensEngine(){
+    private fun createFaceAnalyzer(){
         val setting = MLFaceAnalyzerSetting.Factory()
             .setFeatureType(MLFaceAnalyzerSetting.TYPE_FEATURES)
             .setKeyPointType(MLFaceAnalyzerSetting.TYPE_UNSUPPORT_KEYPOINTS)
-            .setMinFaceProportion(0.1F)
+            .setMinFaceProportion(0.1f)
             .setTracingAllowed(true)
             .create()
 
         analyzer = MLAnalyzerFactory.getInstance().getFaceAnalyzer(setting)
+
+        if(detectMode == 1003){
+            val transactor = MLMaxSizeFaceTransactor.Creator(analyzer, object : MLResultTrailer<MLFace?>() {
+                override fun objectCreateCallback(itemId: Int, obj: MLFace?) {
+                    overlay!!.clear()
+                    //Si no detecta un rostro retorna null
+                    if(obj == null){
+                        return
+                    }
+                    val faceGraphic = LocalFaceGraphic(overlay!!, obj, this@LiveFaceActivityCamera)
+                    overlay!!.addGraphic(faceGraphic)
+
+                    val emotion = obj.emotions //asignamos el paquete de emociones de Huawei
+                    //Si las probabilidades de que sea una sonrisa lo que capta el lente son mayores del
+                    //95% es seguro tomar una foto
+                    if(emotion.smilingProbability > smillingPossibility){
+                        safeToTakePicture = true
+                    }
+                }
+
+                //En caso de que necesitemos tomar la foto nuevamente
+                override fun objectUpdateCallback(var1: MLAnalyzer.Result<MLFace?>?, obj: MLFace?) {
+                    overlay!!.clear()
+                    //Si no detecta un rostro retorna null
+                    if(obj == null){
+                        return
+                    }
+
+                    val faceGraphic = LocalFaceGraphic(overlay!!, obj, this@LiveFaceActivityCamera)
+                    overlay!!.addGraphic(faceGraphic)
+
+                    val emotion = obj.emotions //asignamos el paquete de emociones de Huawei
+
+                    //Si las probabilidades de que sea una sonrisa lo que capta el lente son mayores del
+                    //95% es seguro tomar una foto
+                    //En este caso como es para volver a utilizar la cámara asignamos la variable
+                    //safeToTake picture la estará en true solo después de que la cámara haya sido utilizada
+                    if(emotion.smilingProbability > smillingPossibility && safeToTakePicture){
+                        safeToTakePicture = true
+                    }
+                }
+
+                //Callback en caso de que perdamos la conexión con nuestra cámara
+                override fun lostCallback(result: MLAnalyzer.Result<MLFace?>?) {
+                    overlay!!.clear()
+                }
+
+                override fun completeCallback() {
+                       overlay!!.clear()
+
+                }
+
+            }).create() //Creamos la variable transactor
+            analyzer!!.setTransactor(transactor) //Acá tenemos la validación de transactor
+        }
+        else{
+            //Acá validaremos el botón del código 1002, del botón mostPeople
+        }
+    }
+
+
+    /**
+     * Esta función, hace el papel de motor del lente.
+     */
+    private fun createLensEngine(){
         val context: Context = this.applicationContext
         mLensEngine = LensEngine.Creator(context, analyzer).setLensType(lensType)
             .applyDisplayDimension(640, 480)
@@ -107,7 +186,7 @@ class LiveFaceActivityCamera : AppCompatActivity() {
         restartButton!!.visibility = View.GONE
         if (mLensEngine != null){
             try { //Al traer la cámara debemos de manejar todas las excepciones posibles
-                if(detectMode == 1003 || detectMode == 1002){
+                if(detectMode == 1003){
                     mPreview!!.start(mLensEngine, overlay)
                 }else{
                     mPreview!!.start(mLensEngine)
@@ -125,6 +204,7 @@ class LiveFaceActivityCamera : AppCompatActivity() {
      */
     private fun startPreview(view: View?){
         mPreview!!.release()
+        createFaceAnalyzer()// Analizar el rostro
         createLensEngine()
         startLensEngine()
     }

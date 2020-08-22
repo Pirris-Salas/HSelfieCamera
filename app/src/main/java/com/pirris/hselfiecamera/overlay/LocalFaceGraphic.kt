@@ -10,12 +10,13 @@ import com.huawei.hms.mlsdk.face.MLFaceShape
 import com.pirris.hselfiecamera.utils.CommonUtils.dp2px
 
 class LocalFaceGraphic(
-    overlay: GraphicOverlay,
+    private val overlay: GraphicOverlay,
     @field:Volatile private var face: MLFace?,
     private val mContext: Context
 ): BaseGraphic(overlay) {
 
     private val facePaint: Paint
+
     init{
         val lineWidth = dp2px(mContext, 1f)
         facePaint = Paint()
@@ -40,7 +41,7 @@ class LocalFaceGraphic(
         for (i in points.indices){
             val point = points[i] ?: continue
             if (point.x != null && point.y != null){
-                if (point.x > horizontalMax ) horizontalMax = point.x
+                if (point.x > horizontalMax) horizontalMax = point.x
                 if (point.x < horizontalMin) horizontalMin = point.x
                 if (point.y > verticalMax) verticalMax = point.y
                 if (point.y < verticalMin) verticalMin = point.y

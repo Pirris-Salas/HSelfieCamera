@@ -19,7 +19,7 @@ import com.pirris.hselfiecamera.auth.AuthActivity
 import com.pirris.hselfiecamera.face.LiveFaceActivityCamera
 import kotlinx.android.synthetic.main.activity_home.*
 import java.lang.RuntimeException
-import java.util.jar.Manifest
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -180,7 +180,7 @@ class MainActivity : AppCompatActivity() {
 
         //Activamos la cámara
         btnMostPeople.setOnClickListener {
-            val intent = Intent(this@MainActivity, LiveFaceActivityCamera::class.java)
+            val intent = Intent(this, LiveFaceActivityCamera::class.java)
             intent.putExtra("detect_mode", 1002)
             startActivity(intent)
         }
