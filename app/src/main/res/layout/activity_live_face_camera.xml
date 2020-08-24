@@ -34,6 +34,7 @@
 
     <Button
         android:id="@+id/btnRestart"
+        android:onClick="startPreview"
         android:layout_width="@dimen/margin35dp"
         android:layout_height="@dimen/margin35dp"
         android:textOn=""

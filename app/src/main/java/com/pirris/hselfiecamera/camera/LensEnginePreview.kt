@@ -108,6 +108,7 @@ class LensEnginePreview (context: Context, attributeSet: AttributeSet?): ViewGro
         if (mLensEngine != null) {
             mStartRequested = true
             //Vamos a crear una función que nos va a decir si la cámara está lista
+            startIfReady()
         }
     }
 
@@ -131,7 +132,7 @@ class LensEnginePreview (context: Context, attributeSet: AttributeSet?): ViewGro
     fun startIfReady() {
         if (mStartRequested && mSurfaceAvailable) {
             mLensEngine!!.run(mSurfaceView.holder)
-            if (overlay != null) {
+            if (mOverlay != null) {
                 val size: Size = mLensEngine!!.displayDimension
                 val min: Int = size.width.coerceAtMost(size.height)
                 val max: Int = size.width.coerceAtLeast((size.height))
