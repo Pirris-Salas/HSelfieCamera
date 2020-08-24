@@ -1,7 +1,10 @@
 package com.pirris.hselfiecamera.face
 
 import android.content.Context
+import android.content.Intent
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
@@ -22,7 +25,10 @@ import com.pirris.hselfiecamera.camera.LensEnginePreview
 import com.pirris.hselfiecamera.overlay.GraphicOverlay
 import com.pirris.hselfiecamera.overlay.LocalFaceGraphic
 import kotlinx.android.synthetic.main.activity_live_face_camera.*
+import java.io.File
+import java.io.FileOutputStream
 import java.io.IOException
+import java.net.URI
 
 class LiveFaceActivityCamera : AppCompatActivity(), View.OnClickListener {
     private var analyzer: MLFaceAnalyzer? = null
@@ -288,7 +294,62 @@ class LiveFaceActivityCamera : AppCompatActivity(), View.OnClickListener {
             //handler para la foto
             mHandler.sendEmptyMessage(STOP_PREVIEW)
             val bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
+
+            //Guardamos el bitmap mediante la funcion saveBitmapToGallery
+            saveBitmapToGallery(bitmap)
         } )
+    }
+
+    /**
+     * Función para guardar el bitmap en la Galería del teléfono
+     * recibe un bitmap
+     */
+    private fun saveBitmapToGallery(bitmap: Bitmap): String{
+        //Ruta por defecto de la carpeta de galería de los teléfonos Huawei
+        val appDir = File("/storage/emulated/0/DCIM/Camera")
+
+        if(!appDir.exists()){ //Si el directorio no exite
+            //Procedemos a crear el directorio, y guardamos el resultado de la creación
+            //false o true
+            val res: Boolean = appDir.mkdir()
+            if (!res){
+                Log.e("Error:", "No pudimos crear el directorio")
+                return "" //retornamos un vacío
+            }
+        }
+        //Nombre por defecto de la foto al ser guardada
+        //EJ: HSelfieCamera 23/08/2020 22:43:25.jpg
+        val fileName = "HSelfieCamera " + System.currentTimeMillis() + ".jpg"
+
+        //Procedemos a crear el archivo, mediante la función de Java File
+        //Le pasamos la ruta del directorio, nombre del archivo
+        val file = File(appDir, fileName)
+        try {
+            //Creamos un file output stream, y le pasamos file
+            val fos = FileOutputStream(file)
+
+            //Ahora tomamos el bitmap, y lo comprimimos a formato .jpg
+            //A una calidad del 100%
+            //Y pasamos el FileOutputStream(ruta y nombre del archivo)
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos)
+            fos.flush() // Liberamos la memoria ram
+            fos.close() // Cerramos/Borramos el file output stream para evitar duplicados
+
+            //Procedemos a crear una uri, la cual nos permitirá acceder a la galería del teléfono
+            //pasamos la ruta y el nombre del archivo
+            val uri: Uri = Uri.fromFile(file)
+
+            //Procedemos a crear un broadcast para indicarle a Android dónde guardaremos la foto
+            //Intent es la forma en la que Android se comunica con otras aplicaciones dentro
+            //del dispositivo. ACTION_MEDIA_SCANNER_SCAN_FILE se encarga de revisar el formato
+            //de la imagen y si todo está bien lo guarda en la galería
+            this.sendBroadcast(Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, uri))
+
+
+        }catch (e: IOException){
+            e.printStackTrace()
+        }
+        return file.absolutePath //retornamos el archivo con su ruta definitiva
     }
 
     private val mHandler: Handler = object :Handler(){
