@@ -34,11 +34,11 @@
 
     <Button
         android:id="@+id/btnRestart"
-        android:onClick="startPreview"
         android:layout_width="@dimen/margin35dp"
         android:layout_height="@dimen/margin35dp"
         android:textOn=""
         android:textOff=""
+        android:onClick="startPreview"
         android:background="@drawable/restart"
         android:layout_marginBottom="@dimen/margin30dp"
         android:layout_marginEnd="@dimen/margin20dp"

@@ -1,8 +1,11 @@
 package com.pirris.hselfiecamera.face
 
 import android.content.Context
+import android.graphics.BitmapFactory
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
+import android.os.Message
 import android.util.Log
 import android.view.View
 import android.widget.Button
@@ -18,6 +21,7 @@ import com.pirris.hselfiecamera.R
 import com.pirris.hselfiecamera.camera.LensEnginePreview
 import com.pirris.hselfiecamera.overlay.GraphicOverlay
 import com.pirris.hselfiecamera.overlay.LocalFaceGraphic
+import kotlinx.android.synthetic.main.activity_live_face_camera.*
 import java.io.IOException
 
 class LiveFaceActivityCamera : AppCompatActivity(), View.OnClickListener {
@@ -129,7 +133,8 @@ class LiveFaceActivityCamera : AppCompatActivity(), View.OnClickListener {
                     //Si las probabilidades de que sea una sonrisa lo que capta el lente son mayores del
                     //95% es seguro tomar una foto
                     if(emotion.smilingProbability > smillingPossibility){
-                        safeToTakePicture = true
+                        safeToTakePicture = false
+                        mHandler.sendEmptyMessage(TAKE_PHOTO)
                     }
                 }
 
@@ -151,7 +156,8 @@ class LiveFaceActivityCamera : AppCompatActivity(), View.OnClickListener {
                     //En este caso como es para volver a utilizar la cámara asignamos la variable
                     //safeToTake picture la estará en true solo después de que la cámara haya sido utilizada
                     if(emotion.smilingProbability > smillingPossibility && safeToTakePicture){
-                        safeToTakePicture = true
+                        safeToTakePicture = false
+                        mHandler.sendEmptyMessage(TAKE_PHOTO)
                     }
                 }
 
@@ -186,6 +192,7 @@ class LiveFaceActivityCamera : AppCompatActivity(), View.OnClickListener {
                     }
                     if(flag > faceSparseArray.size() * smilingRate && safeToTakePicture ){
                         safeToTakePicture = false
+                        mHandler.sendEmptyMessage(TAKE_PHOTO)
                     }
                 }
 
@@ -220,6 +227,7 @@ class LiveFaceActivityCamera : AppCompatActivity(), View.OnClickListener {
                 }else{
                     mPreview!!.start(mLensEngine)
                 }
+                safeToTakePicture = true
             }catch (e: IOException){
                 mLensEngine!!.release()
                 mLensEngine = null
@@ -231,23 +239,69 @@ class LiveFaceActivityCamera : AppCompatActivity(), View.OnClickListener {
      * Hereda de view
      * Funciona para crear e iniciar de nuevo el motor del lente
      */
-    private fun startPreview(view: View?){
+     fun startPreview(view: View?) {
         mPreview!!.release()
         createFaceAnalyzer()// Analizar el rostro
         createLensEngine()
         startLensEngine()
     }
 
-    override fun onClick(p0: View?) {
-        isFront = !isFront
+    override fun onClick(v: View?) {
+        //isFront = !isFront
         if (isFront){
             lensType = LensEngine.FRONT_LENS
+            isFront = !isFront
         }else{
             lensType = LensEngine.BACK_LENS
+            isFront = !isFront
         }
         if (mLensEngine != null){
             mLensEngine!!.close()
         }
-        startPreview(p0)
+        startPreview(v)
     }
+
+    //Declaramos 2 variables constantes para los métodos takePhoto y stopPreview
+    //Códigos para toma de foto y retoma de foto
+    companion object{
+        private const val STOP_PREVIEW = 1
+        private const val TAKE_PHOTO = 2
+    }
+
+    private fun stopPreview(){
+        btnRestart!!.setVisibility(View.VISIBLE)
+        if (mLensEngine != null){
+            mLensEngine!!.release()
+            safeToTakePicture = false
+        }
+        if (analyzer != null){
+            try {
+                analyzer!!.stop()
+            }catch (e: IOException){
+                Log.e("Error", "No pudimos detener la cámara")
+            }
+        }
+        }
+
+    private fun takePhoto(){
+        mLensEngine!!.photograph(null, LensEngine.PhotographListener{bytes ->
+            //handler para la foto
+            mHandler.sendEmptyMessage(STOP_PREVIEW)
+            val bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
+        } )
+    }
+
+    private val mHandler: Handler = object :Handler(){
+        override fun handleMessage(msg: Message) {
+            super.handleMessage(msg)
+            when(msg.what){
+                STOP_PREVIEW -> stopPreview()
+                TAKE_PHOTO -> takePhoto()
+                else -> {
+
+                }
+            }
+        }
+    }
+
 }
