@@ -4,12 +4,14 @@ import android.app.Activity
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import com.huawei.hms.support.hwid.HuaweiIdAuthManager
 import com.huawei.hms.support.hwid.request.HuaweiIdAuthParams
 import com.huawei.hms.support.hwid.request.HuaweiIdAuthParamsHelper
 import com.pirris.hselfiecamera.R
 import com.pirris.hselfiecamera.main.MainActivity
+import com.pirris.hselfiecamera.push.GetTokenAction
 import kotlinx.android.synthetic.main.activity_auth.*
 
 class AuthActivity : AppCompatActivity() {
@@ -21,6 +23,11 @@ class AuthActivity : AppCompatActivity() {
         //Establecemos un listener, de forma que cuando el botón sea presionado dé inicio la autenticación
         btnLogin.setOnClickListener {
             loginHuaweiIdAuth()
+        }
+
+        //Llamamos la funcion getToken para inicializar la solicitud del token a la nube de Huawei
+        GetTokenAction().getToken(this){
+            Log.d("PushToken: ", it)
         }
 
     }
