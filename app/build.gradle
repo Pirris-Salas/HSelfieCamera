@@ -24,8 +24,8 @@ android {
         release{
             storeFile file('HmsDemo.jks')
             keyAlias('HmsDemo')
-            keyPassword('Luis1010')
-            storePassword('Luis1010')
+            keyPassword('Pass')
+            storePassword('Pass')
             v1SigningEnabled true
             v2SigningEnabled true
         }
